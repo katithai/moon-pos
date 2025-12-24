@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Moon POS - Menu Mới</title>
+    <style>
+        :root {
+            --primary: #d35400;
+            --secondary: #27ae60;
+            --bg: #f0f2f5;
+        }
+
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            background: var(--bg); margin: 0; padding: 10px; 
+        }
+
+        h1 { text-align: center; font-size: 1.2rem; color: var(--primary); margin: 10px 0; text-transform: uppercase; }
+
+        /* Bố cục danh sách bàn */
+        .tables-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 6px solid #ccc;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-card.active {
+            border-left-color: var(--primary);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+
+        .table-name { font-weight: bold; font-size: 1.1rem; }
+        .table-status { font-size: 0.8rem; color: #888; }
+        .active .table-status { color: var(--primary); font-weight: bold; }
+
+        /* Vùng hiển thị toàn bộ món ăn */
+        .items-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .item-tag {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+
+        .item-tag b { color: var(--primary); margin-left: 4px; }
+
+        .total-row {
+            text-align: right;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #e74c3c;
+            font-size: 1.1rem;
+        }
+
+        /* MODAL ORDER */
+        #order-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 1000; flex-direction: column;
+        }
+
+        .modal-header { padding: 15px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .modal-body { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
+        .bill-area { height: 30%; background: #f8f9fa; overflow-y: auto; padding: 10px; border-bottom: 2px solid #ddd; }
+        .menu-tabs { display: flex; overflow-x: auto; padding: 10px; gap: 8px; background: #fff; }
+        .tab { padding: 8px 15px; border-radius: 20px; border: 1px solid #ddd; white-space: nowrap; font-size: 0.9rem; }
+        .tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .menu-grid { flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
+        .food-item { background: white; border: 1px solid #eee; padding: 12px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .food-name { font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px; }
+        .food-price { color: var(--secondary); font-size: 0.8rem; }
+        .footer { padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid #eee; }
+        .btn { padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; }
+        .btn-pay { background: var(--secondary); color: white; }
+        .btn-close { background: #eee; }
+        .bill-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <h1>🌙 TIỆM NHÀ MOON</h1>
+    <div class="tables-list" id="tables-list"></div>
+
+    <div id="order-modal">
+        <div class="modal-header">
+            <span id="modal-title" style="font-weight:bold">Bàn X</span>
+            <span id="modal-total" style="color:red; font-weight:bold">0đ</span>
+        </div>
+        <div class="modal-body">
+            <div class="bill-area" id="bill-area"></div>
+            <div class="menu-tabs" id="menu-tabs"></div>
+            <div class="menu-grid" id="menu-grid"></div>
+        </div>
+        <div class="footer">
+            <button class="btn btn-close" onclick="closeModal()">ĐÓNG</button>
+            <button class="btn btn-pay" onclick="payTable()">THANH TOÁN</button>
+        </div>
+    </div>
+
+    <script>
+        // CẬP NHẬT MENU CHÍNH XÁC THEO ẢNH
+        const menuData = {
+            "Bánh Canh": [
+                { name: "Bánh canh cá lóc", price: 35000 },
+                { name: "Bánh canh tôm thịt", price: 35000 },
+                { name: "BC cá lóc + mọc", price: 40000 },
+                { name: "BC tôm thịt + mọc", price: 40000 },
+                { name: "Bánh canh đặc biệt", price: 50000 },
+                { name: "Bánh canh thêm", price: 8000 },
+                { name: "Quẩy (3 cái)", price: 5000 }
+            ],
+            "Cơm": [
+                { name: "Cơm gà xối mỡ", price: 35000 },
+                { name: "Cơm gà xé", price: 35000 },
+                { name: "Cơm gà XM + trứng", price: 40000 },
+                { name: "Cơm gà xé + trứng", price: 40000 },
+                { name: "Cơm gà XM+xé+trứng", price: 50000 },
+                { name: "Cơm chiên trứng thêm", price: 8000 }
+            ],
+            "Bún Bò Huế": [
+                { name: "Bún bò Huế ko móng", price: 29000 },
+                { name: "Bún móng giò mọc", price: 29000 },
+                { name: "Bún bò Huế đầy đủ", price: 35000 },
+                { name: "Bún bò Huế đặc biệt", price: 40000 },
+                { name: "Bún thêm", price: 5000 },
+                { name: "Quẩy (3 cái)", price: 5000 }
+            ],
+            "Mì Quảng": [
+                { name: "Mì Quảng truyền thống", price: 25000 },
+                { name: "Mì Quảng tôm thịt", price: 35000 },
+                { name: "Mì Quảng gà", price: 35000 },
+                { name: "Mì Quảng thập cẩm", price: 40000 },
+                { name: "Mì thêm", price: 5000 },
+                { name: "Bánh đa thêm", price: 5000 }
+            ],
+            "Đồ Uống": [
+                { name: "Trà quất ly khổng lồ", price: 12000 },
+                { name: "Trà chanh ly khổng lồ", price: 12000 },
+                { name: "Trà quất nha đam KL", price: 15000 },
+                { name: "Trà chanh nha đam KL", price: 15000 },
+                { name: "Trà đào nha đam", price: 20000 },
+                { name: "Trà vải nha đam", price: 20000 },
+                { name: "Trà đào nha đam KL", price: 30000 },
+                { name: "Trà vải nha đam KL", price: 30000 },
+                { name: "Sữa chua đánh đá", price: 17000 },
+                { name: "Sữa chua nha đam", price: 20000 }
+            ]
+        };
+
+        let currentTable = null;
+        let currentCat = "Bánh Canh";
+        let orders = JSON.parse(localStorage.getItem('moonNewMenuPOS')) || {};
+
+        function renderAll() {
+            const list = document.getElementById('tables-list');
+            list.innerHTML = '';
+            for (let i = 1; i <= 6; i++) {
+                const items = orders[i] || [];
+                const isActive = items.length > 0;
+                
+                // Gộp món để đếm số lượng
+                const summary = {};
+                items.forEach(item => summary[item.name] = (summary[item.name] || 0) + 1);
+
+                const total = items.reduce((sum, item) => sum + item.price, 0);
+
+                const card = document.createElement('div');
+                card.className = `table-card ${isActive ? 'active' : ''}`;
+                card.innerHTML = `
+                    <div class="table-header">
+                        <span class="table-name">BÀN ${i}</span>
+                        <span class="table-status">${isActive ? 'ĐANG PHỤC VỤ' : 'TRỐNG'}</span>
+                    </div>
+                    <div class="items-display">
+                        ${isActive ? Object.keys(summary).map(name => `
+                            <div class="item-tag">${name} <b>x${summary[name]}</b></div>
+                        `).join('') : '<span style="color:#ccc">Chưa có món nào</span>'}
+                    </div>
+                    ${isActive ? `<div class="total-row">Tổng: ${total.toLocaleString()}đ</div>` : ''}
+                `;
+                card.onclick = () => openOrder(i);
+                list.appendChild(card);
+            }
+        }
+
+        function openOrder(id) {
+            currentTable = id;
+            document.getElementById('modal-title').innerText = `Bàn số ${id}`;
+            document.getElementById('order-modal').style.display = 'flex';
+            renderBill();
+            renderTabs();
+            renderMenu();
+        }
+
+        function renderTabs() {
+            const box = document.getElementById('menu-tabs');
+            box.innerHTML = Object.keys(menuData).map(cat => `
+                <div class="tab ${cat === currentCat ? 'active' : ''}" onclick="setCat('${cat}')">${cat}</div>
+            `).join('');
+        }
+
+        function setCat(cat) { currentCat = cat; renderTabs(); renderMenu(); }
+
+        function renderMenu() {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = menuData[currentCat].map(item => `
+                <div class="food-item" onclick="addDish('${item.name}', ${item.price})">
+                    <span class="food-name">${item.name}</span>
+                    <span class="food-price">${item.price.toLocaleString()}đ</span>
+                </div>
+            `).join('');
+        }
+
+        function addDish(name, price) {
+            if (!orders[currentTable]) orders[currentTable] = [];
+            orders[currentTable].push({ name, price });
+            save();
+        }
+
+        function renderBill() {
+            const box = document.getElementById('bill-area');
+            const items = orders[currentTable] || [];
+            box.innerHTML = items.map((o, idx) => `
+                <div class="bill-item">
+                    <span>${o.name}</span>
+                    <span>${o.price.toLocaleString()}đ <b onclick="removeDish(${idx})" style="color:red; padding-left:10px">✕</b></span>
+                </div>
+            `).join('');
+            document.getElementById('modal-total').innerText = items.reduce((s, i) => s + i.price, 0).toLocaleString() + 'đ';
+        }
+
+        function removeDish(idx) {
+            orders[currentTable].splice(idx, 1);
+            if (!orders[currentTable].length) delete orders[currentTable];
+            save();
+        }
+
+        function save() {
+            localStorage.setItem('moonNewMenuPOS', JSON.stringify(orders));
+            renderBill();
+            renderAll();
+        }
+
+        function payTable() {
+            if (!orders[currentTable]) return;
+            if (confirm("Thanh toán bàn này?")) {
+                delete orders[currentTable];
+                save();
+                closeModal();
+            }
+        }
+
+        function closeModal() { document.getElementById('order-modal').style.display = 'none'; }
+
+        renderAll();
+    </script>
+</body>
+</html>
