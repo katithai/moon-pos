@@ -6,226 +6,69 @@
     <title>Moon POS - Final</title>
     <style>
         :root {
-            --primary: #d35400;
-            --secondary: #27ae60;
+            --primary: #d35400; /* Cam - Đang phục vụ */
+            --secondary: #27ae60; /* Xanh - Đã xong */
             --bg: #f0f2f5;
-            --danger: #c0392b;
-            --light-gray: #f8f9fa;
-            --gray: #888;
         }
 
-        /* Reset & Base Styles */
         body { 
             font-family: -apple-system, system-ui, sans-serif; 
-            background: var(--bg); 
-            margin: 0; 
-            padding: 10px; 
+            background: var(--bg); margin: 0; padding: 10px; 
             user-select: none;
         }
 
-        h1 { 
-            text-align: center; 
-            font-size: 1.2rem; 
-            color: var(--primary); 
-            margin: 10px 0; 
-            text-transform: uppercase; 
-        }
+        h1 { text-align: center; font-size: 1.2rem; color: var(--primary); margin: 10px 0; text-transform: uppercase; }
 
-        /* Button Styles */
-        .btn {
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .btn:active { opacity: 0.8; }
-
-        .btn-action {
-            width: 32px;
-            height: 32px;
-            border: none;
-            border-radius: 50%;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.1s;
-        }
-
-        .btn-action:active { transform: scale(0.95); }
-
-        .btn-qty {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            border: none;
-            background: #f0f2f5;
-            color: var(--primary);
-            font-weight: bold;
-            font-size: 1.1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-qty:active { background: #e0e0e0; }
-
-        /* Table List Styles */
-        .tables-list { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            margin-bottom: 20px; 
-        }
+        /* --- DANH SÁCH BÀN --- */
+        .tables-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
 
         .table-card {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
+            background: white; border-radius: 12px; padding: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border-left: 8px solid #ccc;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            cursor: pointer;
+            border-left: 8px solid #ccc; 
+            display: flex; flex-direction: column; position: relative;
         }
 
         .table-card.active { border-left-color: var(--primary); } 
-        .table-card.done { 
-            border-left-color: var(--secondary); 
-            background-color: #f9fff9; 
-        }
+        .table-card.done { border-left-color: var(--secondary); background-color: #f9fff9; }
 
         .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 8px;
-            margin-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 8px;
         }
 
         .table-info { display: flex; flex-direction: column; }
         .table-name { font-weight: bold; font-size: 1.1rem; }
-        .table-status { font-size: 0.8rem; color: var(--gray); font-weight: normal;}
-
+        .table-status { font-size: 0.8rem; color: #888; font-weight: normal;}
+        
         .active .table-status { color: var(--primary); font-weight: bold; }
         .done .table-status { color: var(--secondary); font-weight: bold; }
 
         .action-group { display: flex; gap: 8px; }
-
-        .btn-trash { background: #fee; color: var(--danger); }
+        .btn-action {
+            width: 32px; height: 32px; border: none; border-radius: 50%;
+            font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-trash { background: #fee; color: #c0392b; }
         .btn-check { background: #e8f8f5; color: #ccc; }
         .done .btn-check { background: var(--secondary); color: white; }
 
-        .items-display { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 5px; 
-            min-height: 20px;
-        }
-
+        .items-display { display: flex; flex-wrap: wrap; gap: 5px; }
         .item-tag {
-            background: var(--light-gray);
-            border: 1px solid #ddd;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: #333;
+            background: #f8f9fa; border: 1px solid #ddd; padding: 4px 8px;
+            border-radius: 6px; font-size: 0.85rem; color: #333;
         }
+        .item-tag b { color: var(--primary); margin-left: 4px; }
+        .total-row { text-align: right; margin-top: 10px; font-weight: bold; color: #e74c3c; font-size: 1.1rem; }
 
-        .item-tag b { 
-            color: var(--primary); 
-            margin-left: 4px; 
-        }
-
-        .total-row { 
-            text-align: right; 
-            margin-top: 10px; 
-            font-weight: bold; 
-            color: #e74c3c; 
-            font-size: 1.1rem; 
-        }
-
-        /* Modal Styles */
-        #order-modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: white; 
-            z-index: 1000; 
-            flex-direction: column; 
-        }
-
-        .modal-header {
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-        }
-
-        .modal-body { 
-            display: flex; 
-            flex-direction: column; 
-            flex-grow: 1; 
-            overflow: hidden; 
-        }
-
-        /* Bill Area Styles */
-        .bill-area { 
-            height: 35%; 
-            background: #f8f9fa; 
-            overflow-y: auto; 
-            padding: 10px; 
-            border-bottom: 2px solid #ddd; 
-        }
-
-        .bill-item { 
-            display: grid; 
-            grid-template-columns: 1fr auto auto; 
-            align-items: center; 
-            gap: 10px;
-            padding: 10px 0; 
-            border-bottom: 1px solid #eee; 
-            font-size: 0.9rem; 
-        }
-
-        .bill-name-group { 
-            display: flex; 
-            flex-direction: column; 
-        }
-
-        .bill-control {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: #fff;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-            padding: 2px;
-        }
-
-        .qty-num { 
-            font-weight: bold; 
-            padding: 0 8px; 
-            min-width: 15px; 
-            text-align: center; 
-            font-size: 1rem;
-        }
-
-        /* Menu Tabs */
+        /* --- MODAL --- */
+        #order-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1000; flex-direction: column; }
+        .modal-header { padding: 15px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .modal-body { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
+        .bill-area { height: 35%; background: #f8f9fa; overflow-y: auto; padding: 10px; border-bottom: 2px solid #ddd; }
+        
+        /* --- MENU 1 HÀNG --- */
         .menu-tabs { 
             display: flex; 
             width: 100%;
@@ -234,7 +77,7 @@
             box-sizing: border-box;
             border-bottom: 1px solid #eee;
         }
-
+        
         .tab { 
             flex: 1; 
             text-align: center;
@@ -249,60 +92,52 @@
             overflow: hidden;    
             text-overflow: ellipsis; 
             border: 1px solid transparent;
-            cursor: pointer;
         }
 
         .tab.active { 
-            background: var(--primary); 
-            color: white; 
+            background: var(--primary); color: white; 
             box-shadow: 0 2px 4px rgba(211, 84, 0, 0.3);
         }
 
-        /* Menu Grid */
-        .menu-grid { 
-            flex-grow: 1; 
-            overflow-y: auto; 
+        /* --- STYLE CHO BILL --- */
+        .bill-item { 
             display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 10px; 
-            padding: 10px; 
+            /* Grid chia 3 cột: Tên (tự giãn) - Giá - Nút bấm */
+            grid-template-columns: 1fr auto auto; 
+            align-items: center; 
+            gap: 10px; /* Khoảng cách giữa giá và nút */
+            padding: 10px 0; 
+            border-bottom: 1px solid #eee; 
+            font-size: 0.9rem; 
+        }
+        
+        .bill-name-group { display: flex; flex-direction: column; }
+        
+        .bill-control {
+            display: flex; align-items: center; gap: 4px;
+            background: #fff; border-radius: 20px; border: 1px solid #ddd; padding: 2px;
         }
 
-        .food-item {
-            background: white;
-            border: 1px solid #eee;
-            padding: 12px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            cursor: pointer;
-            transition: transform 0.1s;
+        .btn-qty {
+            width: 26px; height: 26px;
+            border-radius: 50%; border: none; background: #f0f2f5;
+            color: var(--primary); font-weight: bold; font-size: 1.1rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
+        .btn-qty:active { background: #e0e0e0; }
 
-        .food-item:active { transform: scale(0.98); }
+        .qty-num { font-weight: bold; padding: 0 8px; min-width: 15px; text-align: center; font-size: 1rem;}
 
-        .food-name { 
-            font-size: 0.85rem; 
-            font-weight: bold; 
-            display: block; 
-            margin-bottom: 4px; 
-        }
-
-        .food-price { 
-            color: var(--secondary); 
-            font-size: 0.8rem; 
-        }
-
-        /* Footer */
-        .footer { 
-            padding: 10px; 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 10px; 
-            border-top: 1px solid #eee; 
-        }
-
-        .btn-close { background: #eee; }
+        /* --- MENU GRID --- */
+        .menu-grid { flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
+        .food-item { background: white; border: 1px solid #eee; padding: 12px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .food-name { font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px; }
+        .food-price { color: var(--secondary); font-size: 0.8rem; }
+        
+        .footer { padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid #eee; }
+        .btn { padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; }
         .btn-pay { background: var(--secondary); color: white; }
+        .btn-close { background: #eee; }
     </style>
 </head>
 <body>
@@ -327,82 +162,22 @@
     </div>
 
     <script>
-        // ========== DATA & STATE ==========
-        const MENU_DATA = {
-            "Bánh Canh": [
-                { name: "Bánh canh cá lóc", price: 35000 },
-                { name: "Bánh canh tôm thịt", price: 35000 },
-                { name: "BC cá lóc + mọc", price: 40000 },
-                { name: "BC tôm thịt + mọc", price: 40000 },
-                { name: "Bánh canh đặc biệt", price: 50000 },
-                { name: "Bánh canh thêm", price: 8000 },
-                { name: "Quẩy (3 cái)", price: 5000 }
-            ],
-            "Cơm": [
-                { name: "Cơm gà xối mỡ", price: 35000 },
-                { name: "Cơm gà xé", price: 35000 },
-                { name: "Cơm gà XM + trứng", price: 40000 },
-                { name: "Cơm gà xé + trứng", price: 40000 },
-                { name: "Cơm gà XM+xé+trứng", price: 50000 },
-                { name: "Cơm chiên trứng thêm", price: 8000 }
-            ],
-            "Bún Bò": [
-                { name: "Bún bò Huế ko móng", price: 29000 },
-                { name: "Bún móng giò mọc", price: 29000 },
-                { name: "Bún bò Huế đầy đủ", price: 35000 },
-                { name: "Bún bò Huế đặc biệt", price: 40000 },
-                { name: "Bún thêm", price: 5000 },
-                { name: "Quẩy (3 cái)", price: 5000 }
-            ],
-            "Mì Quảng": [
-                { name: "Mì Quảng truyền thống", price: 25000 },
-                { name: "Mì Quảng tôm thịt", price: 35000 },
-                { name: "Mì Quảng gà", price: 35000 },
-                { name: "Mì Quảng thập cẩm", price: 40000 },
-                { name: "Mì thêm", price: 5000 },
-                { name: "Bánh đa thêm", price: 5000 }
-            ],
-            "Đồ Uống": [
-                { name: "Trà quất ly KL", price: 12000 },
-                { name: "Trà chanh ly KL", price: 12000 },
-                { name: "Trà quất nha đam KL", price: 15000 },
-                { name: "Trà chanh nha đam KL", price: 15000 },
-                { name: "Trà đào nha đam", price: 20000 },
-                { name: "Trà vải nha đam", price: 20000 },
-                { name: "Trà đào nha đam KL", price: 30000 },
-                { name: "Trà vải nha đam KL", price: 30000 },
-                { name: "Sữa chua đánh đá", price: 17000 },
-                { name: "Sữa chua nha đam", price: 20000 }
-            ]
+        const menuData = {
+            "Bánh Canh": [ { name: "Bánh canh cá lóc", price: 35000 }, { name: "Bánh canh tôm thịt", price: 35000 }, { name: "BC cá lóc + mọc", price: 40000 }, { name: "BC tôm thịt + mọc", price: 40000 }, { name: "Bánh canh đặc biệt", price: 50000 }, { name: "Bánh canh thêm", price: 8000 }, { name: "Quẩy (3 cái)", price: 5000 } ],
+            "Cơm": [ { name: "Cơm gà xối mỡ", price: 35000 }, { name: "Cơm gà xé", price: 35000 }, { name: "Cơm gà XM + trứng", price: 40000 }, { name: "Cơm gà xé + trứng", price: 40000 }, { name: "Cơm gà XM+xé+trứng", price: 50000 }, { name: "Cơm chiên trứng thêm", price: 8000 } ],
+            "Bún Bò": [ { name: "Bún bò Huế ko móng", price: 29000 }, { name: "Bún móng giò mọc", price: 29000 }, { name: "Bún bò Huế đầy đủ", price: 35000 }, { name: "Bún bò Huế đặc biệt", price: 40000 }, { name: "Bún thêm", price: 5000 }, { name: "Quẩy (3 cái)", price: 5000 } ],
+            "Mì Quảng": [ { name: "Mì Quảng truyền thống", price: 25000 }, { name: "Mì Quảng tôm thịt", price: 35000 }, { name: "Mì Quảng gà", price: 35000 }, { name: "Mì Quảng thập cẩm", price: 40000 }, { name: "Mì thêm", price: 5000 }, { name: "Bánh đa thêm", price: 5000 } ],
+            "Đồ Uống": [ { name: "Trà quất ly KL", price: 12000 }, { name: "Trà chanh ly KL", price: 12000 }, { name: "Trà quất nha đam KL", price: 15000 }, { name: "Trà chanh nha đam KL", price: 15000 }, { name: "Trà đào nha đam", price: 20000 }, { name: "Trà vải nha đam", price: 20000 }, { name: "Trà đào nha đam KL", price: 30000 }, { name: "Trà vải nha đam KL", price: 30000 }, { name: "Sữa chua đánh đá", price: 17000 }, { name: "Sữa chua nha đam", price: 20000 } ]
         };
 
         let currentTable = null;
-        let currentCategory = "Bánh Canh";
+        let currentCat = "Bánh Canh";
         let orders = JSON.parse(localStorage.getItem('moonNewMenuPOS')) || {};
         let doneStatus = JSON.parse(localStorage.getItem('moonDoneStatus')) || {};
 
-        // ========== UTILITY FUNCTIONS ==========
-        function saveToStorage() {
-            localStorage.setItem('moonNewMenuPOS', JSON.stringify(orders));
-            localStorage.setItem('moonDoneStatus', JSON.stringify(doneStatus));
-            renderBill();
-            renderAllTables();
-        }
-
-        function formatPrice(price) {
-            return price.toLocaleString() + 'đ';
-        }
-
-        function calculateTableTotal(tableId) {
-            const items = orders[tableId] || [];
-            return items.reduce((sum, item) => sum + (item.price * item.count), 0);
-        }
-
-        // ========== TABLE LIST FUNCTIONS ==========
-        function renderAllTables() {
+        function renderAll() {
             const list = document.getElementById('tables-list');
             list.innerHTML = '';
-
             for (let i = 1; i <= 6; i++) {
                 const items = orders[i] || [];
                 const isActive = items.length > 0;
@@ -421,7 +196,7 @@
                     }
                 }
 
-                const total = calculateTableTotal(i);
+                const total = items.reduce((sum, item) => sum + (item.price * item.count), 0);
 
                 const card = document.createElement('div');
                 card.className = `table-card ${cardClass}`;
@@ -447,172 +222,135 @@
                             <div class="item-tag">${item.name} <b>x${item.count}</b></div>
                         `).join('') : '<span style="color:#ccc">Chạm để gọi món</span>'}
                     </div>
-                    ${isActive ? `<div class="total-row">Tổng: ${formatPrice(total)}</div>` : ''}
+                    ${isActive ? `<div class="total-row">Tổng: ${total.toLocaleString()}đ</div>` : ''}
                 `;
                 
-                card.onclick = () => openOrderModal(i);
+                card.onclick = () => openOrder(i);
                 list.appendChild(card);
             }
         }
 
-        function toggleDone(event, tableId) {
-            event.stopPropagation();
-            if (!orders[tableId]) return;
-            
-            doneStatus[tableId] = !doneStatus[tableId];
-            saveToStorage();
+        function toggleDone(e, id) {
+            e.stopPropagation();
+            if (!orders[id]) return;
+            if (doneStatus[id]) { delete doneStatus[id]; } else { doneStatus[id] = true; }
+            save();
         }
 
-        function quickDelete(event, tableId) {
-            event.stopPropagation();
-            if (confirm(`Xóa sạch món Bàn ${tableId}?`)) {
-                delete orders[tableId];
-                delete doneStatus[tableId];
-                saveToStorage();
+        function quickDelete(e, id) {
+            e.stopPropagation();
+            if (confirm(`Xóa sạch món Bàn ${id}?`)) {
+                delete orders[id]; delete doneStatus[id]; save();
             }
         }
 
-        // ========== MODAL FUNCTIONS ==========
-        function openOrderModal(tableId) {
-            currentTable = tableId;
-            document.getElementById('modal-title').innerText = `Bàn số ${tableId}`;
+        function openOrder(id) {
+            currentTable = id;
+            document.getElementById('modal-title').innerText = `Bàn số ${id}`;
             document.getElementById('order-modal').style.display = 'flex';
-            renderBill();
-            renderTabs();
-            renderMenu();
+            renderBill(); renderTabs(); renderMenu();
         }
 
-        function closeModal() {
-            document.getElementById('order-modal').style.display = 'none';
-        }
-
-        function renderBill() {
-            const items = orders[currentTable] || [];
-            const billArea = document.getElementById('bill-area');
-            
-            billArea.innerHTML = items.map((item, index) => `
-                <div class="bill-item">
-                    <div class="bill-name-group">
-                        <span style="font-weight:bold">${item.name}</span>
-                        <span style="font-size:0.8rem; color:#888">${formatPrice(item.price)}</span>
-                    </div>
-                    
-                    <span style="font-weight:bold; color:var(--primary)">
-                        ${formatPrice(item.price * item.count)}
-                    </span>
-
-                    <div class="bill-control">
-                        <button class="btn-qty" onclick="changeQuantity(${index}, -1)">-</button>
-                        <span class="qty-num">${item.count}</span>
-                        <button class="btn-qty" onclick="changeQuantity(${index}, 1)">+</button>
-                    </div>
-                </div>
-            `).join('');
-            
-            const total = calculateTableTotal(currentTable);
-            document.getElementById('modal-total').innerText = formatPrice(total);
-        }
-
-        function changeQuantity(index, delta) {
-            const tableOrders = orders[currentTable];
-            if (!tableOrders) return;
-            
-            const item = tableOrders[index];
-            item.count += delta;
-            
-            if (item.count <= 0) {
-                tableOrders.splice(index, 1);
-                if (tableOrders.length === 0) {
-                    delete orders[currentTable];
-                    delete doneStatus[currentTable];
-                }
-            }
-            
-            saveToStorage();
-        }
-
-        // ========== MENU FUNCTIONS ==========
         function renderTabs() {
-            const tabsContainer = document.getElementById('menu-tabs');
-            tabsContainer.innerHTML = Object.keys(MENU_DATA).map(category => `
-                <div class="tab ${category === currentCategory ? 'active' : ''}" 
-                     onclick="setCurrentCategory('${category}')">
-                    ${category}
-                </div>
+            document.getElementById('menu-tabs').innerHTML = Object.keys(menuData).map(cat => `
+                <div class="tab ${cat === currentCat ? 'active' : ''}" onclick="setCat('${cat}')">${cat}</div>
             `).join('');
         }
 
-        function setCurrentCategory(category) {
-            currentCategory = category;
-            renderTabs();
-            renderMenu();
-        }
+        function setCat(cat) { currentCat = cat; renderTabs(); renderMenu(); }
 
         function renderMenu() {
-            const menuGrid = document.getElementById('menu-grid');
-            const menuItems = MENU_DATA[currentCategory] || [];
-            
-            menuGrid.innerHTML = menuItems.map(item => `
+            document.getElementById('menu-grid').innerHTML = menuData[currentCat].map(item => `
                 <div class="food-item" onclick="addDish('${item.name}', ${item.price})">
-                    <span class="food-name">${item.name}</span>
-                    <span class="food-price">${formatPrice(item.price)}</span>
+                    <span class="food-name">${item.name}</span><span class="food-price">${item.price.toLocaleString()}đ</span>
                 </div>
             `).join('');
         }
 
         function addDish(name, price) {
-            if (!orders[currentTable]) {
-                orders[currentTable] = [];
-            }
+            if (!orders[currentTable]) orders[currentTable] = [];
             
-            let existingItem = orders[currentTable].find(item => item.name === name);
+            let existingItem = orders[currentTable].find(i => i.name === name);
             if (existingItem) {
                 existingItem.count++;
             } else {
-                orders[currentTable].push({ name, price, count: 1 });
+                orders[currentTable].push({ name: name, price: price, count: 1 });
             }
             
-            // Reset done status if adding new items
-            if (doneStatus[currentTable]) {
-                delete doneStatus[currentTable];
-            }
+            if (doneStatus[currentTable]) delete doneStatus[currentTable];
+            save();
+        }
+
+        // --- RENDER BILL ĐÃ SỬA: GIÁ BÊN TRÁI NÚT ---
+        function renderBill() {
+            const items = orders[currentTable] || [];
+            document.getElementById('bill-area').innerHTML = items.map((o, idx) => `
+                <div class="bill-item">
+                    <div class="bill-name-group">
+                        <span style="font-weight:bold">${o.name}</span>
+                        <span style="font-size:0.8rem; color:#888">${o.price.toLocaleString()}đ</span>
+                    </div>
+                    
+                    <span style="font-weight:bold; color:var(--primary)">
+                        ${(o.price * o.count).toLocaleString()}đ
+                    </span>
+
+                    <div class="bill-control">
+                        <button class="btn-qty" onclick="changeQty(${idx}, -1)">-</button>
+                        <span class="qty-num">${o.count}</span>
+                        <button class="btn-qty" onclick="changeQty(${idx}, 1)">+</button>
+                    </div>
+                </div>
+            `).join('');
             
-            saveToStorage();
+            const total = items.reduce((s, i) => s + (i.price * i.count), 0);
+            document.getElementById('modal-total').innerText = total.toLocaleString() + 'đ';
+        }
+
+        function changeQty(index, delta) {
+            let item = orders[currentTable][index];
+            item.count += delta;
+            
+            if (item.count <= 0) {
+                orders[currentTable].splice(index, 1);
+                if (orders[currentTable].length === 0) {
+                    delete orders[currentTable];
+                    delete doneStatus[currentTable];
+                }
+            }
+            save();
+        }
+
+        function save() {
+            localStorage.setItem('moonNewMenuPOS', JSON.stringify(orders));
+            localStorage.setItem('moonDoneStatus', JSON.stringify(doneStatus));
+            renderBill(); renderAll();
         }
 
         function payTable() {
             if (!orders[currentTable]) return;
-            
             if (confirm("Thanh toán bàn này?")) {
-                delete orders[currentTable];
-                delete doneStatus[currentTable];
-                saveToStorage();
-                closeModal();
+                delete orders[currentTable]; delete doneStatus[currentTable]; save(); closeModal();
             }
         }
 
-        // ========== INITIALIZATION ==========
-        function initializeApp() {
-            // Check for data compatibility
+        function closeModal() { document.getElementById('order-modal').style.display = 'none'; }
+
+        (function checkDataCompatibility() {
             try {
                 Object.values(orders).forEach(items => {
                     items.forEach(item => {
-                        if (typeof item.count === 'undefined') {
-                            throw new Error('Invalid data format');
-                        }
+                        if (typeof item.count === 'undefined') throw new Error();
                     });
                 });
             } catch (e) {
-                console.log("Resetting old data format...");
+                console.log("Resetting old data...");
                 localStorage.removeItem('moonNewMenuPOS');
                 orders = {};
             }
-            
-            renderAllTables();
-        }
+        })();
 
-        // Initialize the app
-        initializeApp();
+        renderAll();
     </script>
 </body>
 </html>
