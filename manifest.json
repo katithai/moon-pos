@@ -2,7 +2,7 @@
     "name": "Moon POS",
     "short_name": "MoonPOS",
     "start_url": ".",
-    "display": "fullscreen",
+    "display": "standalone",
     "background_color": "#f0f2f5",
     "theme_color": "#d35400",
     "orientation": "portrait",
@@ -19,4 +19,5 @@
         }
     ]
 }
+
 
